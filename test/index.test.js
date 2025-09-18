@@ -13,3 +13,10 @@ describe('Add function', () => {
     expect(add(0, 0)).toBe(0);
   });
 });
+
+describe('Multiply function', () => {
+  test('should multiply two numbers correctly', () => {
+    expect(multiply(2, 3)).toBe(6);
+    expect(multiply(4, 5)).toBe(20);
+  });
+});
