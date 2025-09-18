@@ -19,6 +19,7 @@ describe('Multiply function', () => {
     expect(multiply(2, 3)).toBe(6);
     expect(multiply(4, 5)).toBe(20);
   });
+
 });
 
 describe('Power function', () => {
@@ -26,4 +27,5 @@ describe('Power function', () => {
     expect(power(2, 3)).toBe(8);
     expect(power(4, 5)).toBe(1024);
   });
+
 });
