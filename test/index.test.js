@@ -1,4 +1,4 @@
-const { greet, add } = require('../src/index');
+const { greet, add ,multiply, power} = require('../src/index');
 
 describe('Greet function', () => {
   test('should return greeting message', () => {
@@ -18,5 +18,12 @@ describe('Multiply function', () => {
   test('should multiply two numbers correctly', () => {
     expect(multiply(2, 3)).toBe(6);
     expect(multiply(4, 5)).toBe(20);
+  });
+});
+
+describe('Power function', () => {
+  test('should raise a number to the power of another correctly', () => {
+    expect(power(2, 3)).toBe(8);
+    expect(power(4, 5)).toBe(1024);
   });
 });
