@@ -1,4 +1,4 @@
-const { greet, add ,multiply} = require('../src/index');
+const { greet, add ,multiply, power} = require('../src/index');
 
 describe('Greet function', () => {
   test('should return greeting message', () => {
