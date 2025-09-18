@@ -1,0 +1,14 @@
+{
+  "name": "multi-branch-deployment",
+  "version": "1.0.0",
+  "description": "Example project for multi-branch deployment",
+  "scripts": {
+    "lint": "eslint src test",
+    "test": "jest",
+    "ci": "npm run lint && npm test"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0"
+  }
+}

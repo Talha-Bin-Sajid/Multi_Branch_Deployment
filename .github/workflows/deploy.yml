@@ -1,0 +1,108 @@
+name: Multi-Branch CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run linter
+      run: npm run lint
+
+    - name: Run tests
+      run: npm test -- --coverage --coverageReporters=lcov
+
+    - name: Generate test report
+      run: |
+        mkdir -p reports
+        npx jest --coverage --coverageDirectory=reports/coverage
+        npx eslint . -f json -o reports/eslint-report.json || true
+
+    - name: Upload test artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ci-reports
+        path: reports/
+
+  deploy_qa:
+    name: Deploy to QA Environment
+    runs-on: ubuntu-latest
+    needs: ci
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: ci-reports
+        path: reports/
+
+    - name: Display test coverage
+      run: |
+        echo "Test coverage report:"
+        cat reports/coverage/lcov.info | head -n 5
+
+    - name: Simulate QA deployment
+      run: |
+        echo "Deploying to QA environment..."
+        echo "Using artifact from CI job:"
+        ls -la reports/
+        echo "Successfully deployed to QA environment"
+
+  deploy_prod:
+    name: Deploy to Production Environment
+    runs-on: ubuntu-latest
+    needs: ci
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: ci-reports
+        path: reports/
+
+    - name: Display test coverage
+      run: |
+        echo "Test coverage report:"
+        cat reports/coverage/lcov.info | head -n 5
+
+    - name: Simulate Production deployment
+      run: |
+        echo "Deploying to PRODUCTION environment..."
+        echo "Using artifact from CI job:"
+        ls -la reports/
+        echo "Successfully deployed to PRODUCTION environment"
+
+    - name: Send deployment notification
+      run: |
+        echo "Sending notification to Slack/Teams about production deployment"
+        echo "Notification: Successfully deployed to production environment!"
